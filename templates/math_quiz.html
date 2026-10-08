@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}数学题生成{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>🧮 小学生数学题生成器</h1>
+    <p class="subtitle">一键生成 100~200 道口算练习，支持导出试卷和答案</p>
+</section>
+
+<section class="card">
+    <form method="POST" action="{{ url_for('math_quiz_page') }}">
+        <div class="form-grid">
+            <div class="form-row">
+                <label for="count">题目数量：</label>
+                <input type="number" id="count" name="count" min="10" max="200"
+                       value="{{ params.count }}" required>
+                <small>范围 10~200</small>
+            </div>
+
+            <div class="form-row">
+                <label for="difficulty">难度等级：</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="grade1" {{ 'selected' if params.difficulty=='grade1' }}>一年级 (20以内加减)</option>
+                    <option value="grade2" {{ 'selected' if params.difficulty=='grade2' }}>二年级 (100以内加减)</option>
+                    <option value="grade3" {{ 'selected' if params.difficulty=='grade3' }}>三年级 (万以内+乘法口诀)</option>
+                    <option value="grade4" {{ 'selected' if params.difficulty=='grade4' }}>四年级 (两位数乘除+混合)</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="op_type">题型：</label>
+                <select id="op_type" name="op_type">
+                    <option value="mixed"  {{ 'selected' if params.op_type=='mixed' }}>混合运算</option>
+                    <option value="add"    {{ 'selected' if params.op_type=='add' }}>加法</option>
+                    <option value="sub"    {{ 'selected' if params.op_type=='sub' }}>减法</option>
+                    <option value="mul"    {{ 'selected' if params.op_type=='mul' }}>乘法</option>
+                    <option value="div"    {{ 'selected' if params.op_type=='div' }}>除法</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">生成题目</button>
+    </form>
+
+    {% if problems %}
+    <div class="download-bar">
+        <a href="{{ url_for('download_quiz_txt', count=params.count, difficulty=params.difficulty, op_type=params.op_type, with_answer=0) }}"
+           class="btn btn-secondary">📄 下载试卷（无答案）</a>
+        <a href="{{ url_for('download_quiz_txt', count=params.count, difficulty=params.difficulty, op_type=params.op_type, with_answer=1) }}"
+           class="btn btn-secondary">📄 下载试卷（含答案）</a>
+        <a href="{{ url_for('download_quiz_csv', count=params.count, difficulty=params.difficulty, op_type=params.op_type) }}"
+           class="btn btn-secondary">📊 导出 CSV</a>
+    </div>
+    {% endif %}
+</section>
+
+{% if problems %}
+<section class="card">
+    <h2>题目预览（共 {{ problems|length }} 题）</h2>
+    <div class="quiz-grid">
+        {% for p in problems %}
+        <div class="quiz-item">
+            <span class="quiz-index">{{ p.index }}.</span>
+            <span class="quiz-expr">{{ p.expression }}</span>
+            <span class="quiz-answer">{{ p.answer }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

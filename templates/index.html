@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-card">
+        <div class="avatar">👨‍💻</div>
+        <h1 class="hero-name">{{ profile.name }}</h1>
+        <p class="hero-title">{{ profile.title }}</p>
+        <p class="hero-school">{{ profile.school }}</p>
+        <p class="hero-bio">{{ profile.bio }}</p>
+
+        <div class="hero-buttons">
+            <a href="{{ profile.github }}" target="_blank" rel="noopener" class="btn btn-primary">
+                访问我的 GitHub ↗
+            </a>
+            <a href="{{ url_for('code_counter_page') }}" class="btn btn-secondary">代码统计工具</a>
+            <a href="{{ url_for('math_quiz_page') }}" class="btn btn-secondary">数学题生成器</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">技能栈</h2>
+    <div class="skill-tags">
+        {% for skill in profile.skills %}
+        <span class="tag">{{ skill }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">课程实验项目</h2>
+    <div class="project-grid">
+        <div class="project-card">
+            <div class="project-icon">📊</div>
+            <h3>代码量统计工具</h3>
+            <p>支持 Python / C++ / Java / JS 等多语言递归扫描，
+               统计总行数、代码行、注释行、空行。</p>
+            <a href="{{ url_for('code_counter_page') }}" class="btn btn-sm">立即使用 →</a>
+        </div>
+        <div class="project-card">
+            <div class="project-icon">🧮</div>
+            <h3>小学生数学题生成器</h3>
+            <p>100~200 道口算题，支持 4 个难度等级、
+               加减乘除及混合运算，可导出试卷与答案。</p>
+            <a href="{{ url_for('math_quiz_page') }}" class="btn btn-sm">立即使用 →</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">联系方式</h2>
+    <ul class="contact-list">
+        <li>📧 {{ profile.email }}</li>
+        <li>🐙 <a href="{{ profile.github }}" target="_blank" rel="noopener">{{ profile.github }}</a></li>
+    </ul>
+</section>
+{% endblock %}

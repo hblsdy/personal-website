@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}代码统计{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>📊 代码量统计工具</h1>
+    <p class="subtitle">输入本地项目目录路径，递归扫描并统计代码行数</p>
+</section>
+
+<section class="card">
+    <form method="POST" action="{{ url_for('code_counter_page') }}">
+        <div class="form-row">
+            <label for="scan_path">项目目录路径：</label>
+            <input type="text" id="scan_path" name="scan_path"
+                   placeholder="例如：C:\Users\yourname\project"
+                   value="{{ scan_path or '' }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">开始统计</button>
+    </form>
+</section>
+
+{% if result %}
+<section class="card">
+    <h2>统计结果</h2>
+    <div class="stat-grid">
+        <div class="stat-box">
+            <div class="stat-num">{{ result.total_files }}</div>
+            <div class="stat-label">文件数</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">{{ result.total_lines }}</div>
+            <div class="stat-label">总行数</div>
+        </div>
+        <div class="stat-box highlight">
+            <div class="stat-num">{{ result.code_lines }}</div>
+            <div class="stat-label">代码行</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">{{ result.comment_lines }}</div>
+            <div class="stat-label">注释行</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">{{ result.blank_lines }}</div>
+            <div class="stat-label">空行</div>
+        </div>
+    </div>
+
+    <h3>按语言分布</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>语言</th><th>文件数</th><th>总行数</th>
+                <th>代码行</th><th>注释行</th><th>空行</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for lang, info in result.by_language.items() %}
+            <tr>
+                <td>{{ lang }}</td>
+                <td>{{ info.files }}</td>
+                <td>{{ info.total }}</td>
+                <td>{{ info.code }}</td>
+                <td>{{ info.comment }}</td>
+                <td>{{ info.blank }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <details class="file-detail">
+        <summary>查看文件明细（共 {{ result.total_files }} 个文件）</summary>
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>文件路径</th><th>语言</th><th>总行</th><th>代码行</th></tr>
+            </thead>
+            <tbody>
+            {% for f in result.files %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="mono">{{ f.file_path }}</td>
+                    <td>{{ f.language }}</td>
+                    <td>{{ f.total_lines }}</td>
+                    <td>{{ f.code_lines }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </details>
+</section>
+{% endif %}
+{% endblock %}
